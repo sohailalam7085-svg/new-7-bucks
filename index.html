@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>7 Bucks Media — Equipment Rental & Shoot Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0A0A0A;--white:#F2F0EB;--grey:#8A8A8A;
+  --grey-dark:#1A1A1A;--grey-mid:#2E2E2E;
+  --amber:#C8954A;--amber-light:#E0B47A;
+  --font-d:'Bebas Neue',sans-serif;--font-b:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:var(--font-b);font-size:16px;line-height:1.7;overflow-x:hidden;opacity:0;transition:opacity .5s ease}
+
+/* ── CANVAS BG ── */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4vw;background:rgba(10,10,10,0.75);backdrop-filter:blur(16px);border-bottom:1px solid rgba(200,149,74,0.12);transition:padding .3s,background .3s}
+.logo{font-family:var(--font-d);font-size:1.6rem;letter-spacing:.08em;color:var(--white);text-decoration:none}
+.logo span{color:var(--amber)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--grey);text-decoration:none;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;transition:color .2s;position:relative}
+.nav-links a:not(.nav-cta)::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--amber);transition:width .25s}
+.nav-links a:not(.nav-cta):hover::after{width:100%}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{background:var(--amber);color:var(--black)!important;padding:.45rem 1.2rem;border-radius:2px;font-weight:600!important}
+.nav-cta:hover{background:var(--amber-light)!important}
+.hamburger{display:none;cursor:pointer;flex-direction:column;gap:5px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white)}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 4vw 4rem;position:relative;z-index:1}
+.hero-content{position:relative;z-index:2;max-width:820px}
+.hero-eyebrow{font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--amber);margin-bottom:1.5rem;font-weight:500}
+.hero-title{font-family:var(--font-d);font-size:clamp(4rem,10vw,8.5rem);line-height:.93;letter-spacing:.03em;color:var(--white);margin-bottom:1.5rem}
+.hero-title em{font-style:normal;color:var(--amber)}
+.hero-sub{color:var(--grey);font-size:1.05rem;max-width:520px;margin:0 auto 2.5rem;line-height:1.85}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--amber);color:var(--black);padding:.85rem 2rem;border:none;border-radius:2px;font-family:var(--font-b);font-weight:600;font-size:.9rem;letter-spacing:.04em;text-decoration:none;cursor:pointer;transition:background .2s,transform .15s;position:relative;overflow:hidden}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);background-size:200% 100%;animation:shimmer 2.5s ease-in-out infinite;pointer-events:none}
+.btn-primary:hover{background:var(--amber-light);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--white);padding:.85rem 2rem;border:1px solid rgba(242,240,235,.25);border-radius:2px;font-family:var(--font-b);font-size:.9rem;letter-spacing:.04em;text-decoration:none;cursor:pointer;transition:border-color .2s,transform .15s}
+.btn-outline:hover{border-color:var(--white);transform:translateY(-2px)}
+.hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--grey);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;z-index:2}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--amber),transparent);animation:scrollDown 1.8s ease-in-out infinite}
+
+/* ── SECTIONS ── */
+section{padding:6rem 4vw;position:relative;z-index:1}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:.75rem;display:inline-block}
+.section-title{font-family:var(--font-d);font-size:clamp(2.4rem,5vw,4rem);line-height:1;letter-spacing:.04em;color:var(--white);margin-bottom:1rem}
+.section-desc{color:var(--grey);max-width:540px;line-height:1.8;margin-bottom:3rem}
+.divider{width:0;height:2px;background:var(--amber);margin:1.25rem 0 2rem;transition:width .7s ease .2s}
+.divider.visible{width:48px}
+
+/* ── STATS ── */
+#stats{background:rgba(28,28,28,.8);backdrop-filter:blur(10px);padding:2.5rem 4vw;border-top:1px solid rgba(200,149,74,.15);border-bottom:1px solid rgba(200,149,74,.15)}
+.stats-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2rem;text-align:center}
+.stat-num{font-family:var(--font-d);font-size:3rem;color:var(--amber);line-height:1}
+.stat-label{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-top:.4rem}
+
+/* ── SERVICES ── */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:1rem}
+.service-card{background:rgba(28,28,28,.6);border:1px solid rgba(200,149,74,.12);padding:2.25rem 2rem;border-radius:4px;cursor:pointer;transition:border-color .25s,box-shadow .25s;transform-style:preserve-3d;transform:perspective(800px)}
+.service-card:hover{border-color:rgba(200,149,74,.5);box-shadow:0 8px 40px rgba(200,149,74,.12)}
+.service-icon{font-size:2rem;margin-bottom:1.25rem;display:block}
+.service-name{font-family:var(--font-d);font-size:1.5rem;letter-spacing:.05em;color:var(--white);margin-bottom:.6rem}
+.service-desc{color:var(--grey);font-size:.9rem;line-height:1.75}
+
+/* ── PROCESS ── */
+#process{background:rgba(20,20,20,.85);backdrop-filter:blur(8px)}
+.process-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3rem}
+.step{padding:1.5rem;border:1px solid rgba(200,149,74,.1);border-radius:4px;transition:border-color .3s,transform .3s,box-shadow .3s;background:rgba(10,10,10,.5)}
+.step:hover{border-color:var(--amber);transform:translateY(-6px) rotateX(3deg);box-shadow:0 16px 40px rgba(200,149,74,.1)}
+.step-num{font-family:var(--font-d);font-size:3.5rem;color:rgba(200,149,74,.15);line-height:1;margin-bottom:.5rem}
+.step-title{font-family:var(--font-d);font-size:1.3rem;letter-spacing:.05em;color:var(--white);margin-bottom:.5rem}
+.step-desc{color:var(--grey);font-size:.88rem;line-height:1.75}
+
+/* ── EQUIPMENT ── */
+.equipment-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-top:3rem}
+.equip-item{border:1px solid rgba(242,240,235,.07);padding:1.5rem 1.25rem;border-radius:4px;transition:border-color .25s,transform .25s,box-shadow .25s;background:rgba(28,28,28,.5);transform-style:preserve-3d;cursor:default;position:relative;overflow:hidden}
+.equip-item::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,149,74,.05),transparent);opacity:0;transition:opacity .3s}
+.equip-item:hover{border-color:var(--amber);transform:translateY(-4px) rotateX(4deg) rotateY(-2deg);box-shadow:0 12px 30px rgba(200,149,74,.12)}
+.equip-item:hover::before{opacity:1}
+.equip-emoji{font-size:1.5rem;display:block;margin-bottom:.75rem}
+.equip-name{font-weight:500;font-size:.95rem;color:var(--white);margin-bottom:.3rem}
+.equip-detail{font-size:.8rem;color:var(--grey)}
+
+/* ── WHY ── */
+#why{background:rgba(18,18,18,.9);backdrop-filter:blur(10px)}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.why-list{list-style:none;margin-top:2rem}
+.why-list li{display:flex;gap:1rem;padding:1.25rem 0;border-bottom:1px solid rgba(242,240,235,.07)}
+.why-list li:first-child{border-top:1px solid rgba(242,240,235,.07)}
+.why-check{color:var(--amber);font-size:1.1rem;flex-shrink:0;margin-top:.15rem}
+.why-text strong{display:block;font-weight:500;color:var(--white);margin-bottom:.2rem;font-size:.95rem}
+.why-text span{font-size:.85rem;color:var(--grey)}
+.why-visual{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.why-visual-card{background:rgba(10,10,10,.8);border:1px solid rgba(200,149,74,.15);padding:1.5rem 1.25rem;border-radius:4px;transition:transform .3s,box-shadow .3s}
+.why-visual-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(200,149,74,.1)}
+.why-big-num{font-family:var(--font-d);font-size:2.8rem;color:var(--amber);line-height:1}
+.why-small-label{font-size:.78rem;color:var(--grey);text-transform:uppercase;letter-spacing:.1em;margin-top:.3rem}
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:3rem}
+.testimonial{background:rgba(28,28,28,.7);border:1px solid rgba(242,240,235,.06);padding:2rem 1.75rem;border-radius:4px;position:relative;transition:box-shadow .3s,border-color .3s,transform .3s;backdrop-filter:blur(6px)}
+.testimonial:hover{box-shadow:0 0 32px rgba(200,149,74,.12);border-color:rgba(200,149,74,.3);transform:translateY(-4px)}
+.testimonial::before{content:'\201C';font-family:var(--font-d);font-size:5rem;color:var(--amber);opacity:.2;position:absolute;top:.5rem;left:1.25rem;line-height:1}
+.testimonial-text{color:var(--white);font-size:.92rem;line-height:1.8;margin-bottom:1.5rem;position:relative}
+.testimonial-author{display:flex;align-items:center;gap:.75rem}
+.testimonial-avatar{width:38px;height:38px;border-radius:50%;background:var(--grey-mid);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:var(--amber);flex-shrink:0}
+.testimonial-name{font-weight:500;font-size:.88rem;color:var(--white)}
+.testimonial-role{font-size:.78rem;color:var(--grey)}
+.stars{color:var(--amber);font-size:.8rem;letter-spacing:.05em;margin-bottom:1rem}
+
+/* ── FAQ ── */
+#faq{background:rgba(20,20,20,.9);backdrop-filter:blur(8px)}
+.faq-list{max-width:720px;margin-top:2.5rem}
+.faq-item{border-bottom:1px solid rgba(242,240,235,.08);padding:1.5rem 0}
+.faq-question{display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:1rem}
+.faq-q-text{font-weight:500;font-size:.95rem;color:var(--white)}
+.faq-toggle{color:var(--amber);font-size:1.2rem;flex-shrink:0;transition:transform .25s;user-select:none}
+.faq-answer{color:var(--grey);font-size:.88rem;line-height:1.8;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .25s}
+.faq-item.open .faq-answer{max-height:300px;padding-top:.9rem}
+.faq-item.open .faq-toggle{transform:rotate(45deg)}
+
+/* ── CONTACT ── */
+.contact-wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:4rem;align-items:start}
+.contact-info-item{display:flex;gap:1rem;margin-bottom:1.75rem;align-items:flex-start}
+.contact-icon{width:40px;height:40px;border:1px solid rgba(200,149,74,.3);display:flex;align-items:center;justify-content:center;border-radius:2px;color:var(--amber);font-size:1rem;flex-shrink:0}
+.contact-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--grey);margin-bottom:.2rem}
+.contact-value{font-size:.9rem;color:var(--white)}
+.contact-form{display:flex;flex-direction:column;gap:1rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:.4rem}
+.form-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--grey)}
+.form-input,.form-select,.form-textarea{background:rgba(28,28,28,.8);border:1px solid rgba(242,240,235,.1);color:var(--white);padding:.75rem 1rem;font-family:var(--font-b);font-size:.9rem;border-radius:2px;outline:none;transition:border-color .2s;width:100%;backdrop-filter:blur(4px)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--amber)}
+.form-select option{background:#1a1a1a}
+.form-textarea{resize:vertical;min-height:110px}
+
+/* ── FOOTER ── */
+footer{background:rgba(16,16,16,.95);border-top:1px solid rgba(200,149,74,.12);padding:3.5rem 4vw 2rem;position:relative;z-index:1;backdrop-filter:blur(10px)}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:2.5rem;padding-bottom:3rem;border-bottom:1px solid rgba(242,240,235,.07);margin-bottom:2rem}
+.footer-brand .logo{font-size:1.4rem;display:inline-block;margin-bottom:1rem}
+.footer-brand p{font-size:.85rem;color:var(--grey);line-height:1.75;max-width:220px}
+.footer-col h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:var(--amber);margin-bottom:1rem;font-weight:500}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:.6rem}
+.footer-col ul a{color:var(--grey);text-decoration:none;font-size:.85rem;transition:color .2s}
+.footer-col ul a:hover{color:var(--white)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-copy{font-size:.78rem;color:var(--grey)}
+.social-links{display:flex;gap:1rem}
+.social-links a{color:var(--grey);font-size:.78rem;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.social-links a:hover{color:var(--amber)}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ── KEYFRAMES ── */
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes scrollDown{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@keyframes ripple{0%{transform:scale(0);opacity:1}100%{transform:scale(30);opacity:0}}
+@keyframes waBounceIn{0%{opacity:0;transform:scale(.4) translateY(40px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes waPing{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.4}}
+@keyframes float3d{0%,100%{transform:translateY(0) rotateY(0deg)}50%{transform:translateY(-12px) rotateY(8deg)}}
+
+/* ── WHATSAPP FLOAT ── */
+.wa-float{position:fixed;bottom:2rem;right:2rem;z-index:999;display:flex;align-items:center;gap:.6rem;background:#25D366;color:#fff;text-decoration:none;padding:.7rem 1.1rem .7rem .75rem;border-radius:50px;box-shadow:0 4px 20px rgba(37,211,102,.35);font-family:var(--font-b);font-size:.88rem;font-weight:500;letter-spacing:.02em;transition:transform .25s,box-shadow .25s;animation:waBounceIn .7s cubic-bezier(.34,1.56,.64,1) 1.5s both}
+.wa-float:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 8px 28px rgba(37,211,102,.5)}
+.wa-icon{width:28px;height:28px;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
+.wa-label{white-space:nowrap}
+.wa-ping{position:absolute;top:-4px;right:-4px;width:13px;height:13px;background:#ff4444;border-radius:50%;border:2px solid var(--black);animation:waPing 2s ease-in-out 2s infinite}
+
+/* ── 3D DEPTH CARDS ── */
+.depth-card{transform-style:preserve-3d;perspective:1000px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .why-grid,.contact-wrap{grid-template-columns:1fr;gap:2.5rem}
+  .why-visual{display:none}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:span 2}
+  .form-row{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  .footer-top{grid-template-columns:1fr}
+  .footer-brand{grid-column:span 1}
+  .wa-float{padding:.75rem;border-radius:50%;bottom:1.5rem;right:1.5rem}
+  .wa-label{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 3D BACKGROUND CANVAS -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">7 Bucks<span> Media</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#equipment">Equipment</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Professional Media Services</p>
+    <h1 class="hero-title">Your Vision.<br/><em>Our Gear.</em><br/>Every Shot.</h1>
+    <p class="hero-sub">Camera rentals, podcast setups, full shoot management, and experienced crew — tailored to exactly what your project needs.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Get a Custom Quote</a>
+      <a href="#services" class="btn-outline">What We Offer</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stats-grid">
+    <div><div class="stat-num">200+</div><div class="stat-label">Projects Delivered</div></div>
+    <div><div class="stat-num">50+</div><div class="stat-label">Equipment Items</div></div>
+    <div><div class="stat-num">100%</div><div class="stat-label">Custom Pricing</div></div>
+    <div><div class="stat-num">24h</div><div class="stat-label">Quote Turnaround</div></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">What We Do</p>
+      <h2 class="section-title">End-to-End<br/>Media Services</h2>
+      <div class="divider"></div>
+      <p class="section-desc">Whether you need a single piece of kit or a full production crew, we build the right package around your brief.</p>
+    </div>
+    <div class="services-grid reveal">
+      <div class="service-card depth-card"><span class="service-icon">🎥</span><div class="service-name">Camera Rental</div><p class="service-desc">Cinema-grade cameras available for rent by the day or week. DSLRs, mirrorless, and cinema bodies — with optional operator support.</p></div>
+      <div class="service-card depth-card"><span class="service-icon">🎙️</span><div class="service-name">Audio & Microphones</div><p class="service-desc">Boom mics, lavaliers, shotguns, and full audio rigs. Crystal-clear sound for interviews, films, and live events.</p></div>
+      <div class="service-card depth-card"><span class="service-icon">💡</span><div class="service-name">Lighting Rigs</div><p class="service-desc">Softboxes, LED panels, key lights, and full lighting setups. We configure and operate based on your scene requirements.</p></div>
+      <div class="service-card depth-card"><span class="service-icon">🎧</span><div class="service-name">Podcast Studio Setup</div><p class="service-desc">Complete podcast environments — mics, acoustic treatment, mixers, cameras, and broadcast-ready configurations delivered to your location.</p></div>
+      <div class="service-card depth-card"><span class="service-icon">👥</span><div class="service-name">Crew & Talent</div><p class="service-desc">Sound recordists, photographers, videographers, camera assistants — vetted professionals available on demand for your shoot.</p></div>
+      <div class="service-card depth-card"><span class="service-icon">🎬</span><div class="service-name">Full Shoot Management</div><p class="service-desc">We handle everything from pre-production planning to on-set logistics. Hand us the brief and show up ready to create.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">How It Works</p>
+      <h2 class="section-title">Simple From<br/>Brief to Shoot</h2>
+      <div class="divider"></div>
+      <p class="section-desc">No confusing packages or hidden fees. Tell us what you need and we take it from there.</p>
+    </div>
+    <div class="process-steps">
+      <div class="step reveal"><div class="step-num">01</div><div class="step-title">Contact Us</div><p class="step-desc">Reach out via WhatsApp, phone, or the form below. Tell us about your project, shoot date, and what you're looking to achieve.</p></div>
+      <div class="step reveal"><div class="step-num">02</div><div class="step-title">We Build a Package</div><p class="step-desc">We review your requirements and put together a tailored equipment and crew list — with a custom quote sent within 24 hours.</p></div>
+      <div class="step reveal"><div class="step-num">03</div><div class="step-title">Confirm & Schedule</div><p class="step-desc">Approve the quote, lock in the date, and we handle logistics. Equipment is tested and prepped in advance of your shoot.</p></div>
+      <div class="step reveal"><div class="step-num">04</div><div class="step-title">We Show Up Ready</div><p class="step-desc">Our team arrives on time, fully set up, and ready to support your vision from first frame to final wrap.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPMENT -->
+<section id="equipment">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">Our Kit</p>
+      <h2 class="section-title">Professional<br/>Equipment Available</h2>
+      <div class="divider"></div>
+      <p class="section-desc">A selection of what we carry. Don't see what you need? Ask us — we source and arrange gear to match specific project requirements.</p>
+    </div>
+    <div class="equipment-grid reveal">
+      <div class="equip-item depth-card"><span class="equip-emoji">📷</span><div class="equip-name">Cinema Cameras</div><div class="equip-detail">4K / 6K body options</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">🔭</span><div class="equip-name">Prime & Zoom Lenses</div><div class="equip-detail">Full lens kit available</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">🎙️</span><div class="equip-name">Broadcast Microphones</div><div class="equip-detail">Boom, lav & shotgun</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">💡</span><div class="equip-name">LED Lighting Panels</div><div class="equip-detail">Bi-color, dimmable</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">🎚️</span><div class="equip-name">Audio Mixers</div><div class="equip-detail">Multi-channel recorders</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">🎬</span><div class="equip-name">Gimbals & Stabilizers</div><div class="equip-detail">3-axis, handheld rigs</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">🖥️</span><div class="equip-name">On-Set Monitors</div><div class="equip-detail">5" to 17" field monitors</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">🎧</span><div class="equip-name">Podcast Bundles</div><div class="equip-detail">Complete setups</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">📡</span><div class="equip-name">Wireless Systems</div><div class="equip-detail">IEM & transmitter kits</div></div>
+      <div class="equip-item depth-card"><span class="equip-emoji">🏗️</span><div class="equip-name">Tripods & C-Stands</div><div class="equip-detail">Full support hardware</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="section-inner">
+    <div class="why-grid">
+      <div class="reveal">
+        <p class="section-label">Why 7 Bucks Media</p>
+        <h2 class="section-title">Built for Real<br/>Productions</h2>
+        <div class="divider"></div>
+        <ul class="why-list">
+          <li><span class="why-check">✦</span><div class="why-text"><strong>No Fixed Menus</strong><span>Every project is different. We quote per brief, not per package — so you only pay for what you actually need.</span></div></li>
+          <li><span class="why-check">✦</span><div class="why-text"><strong>Experienced Crew</strong><span>Our team has worked on commercial shoots, documentaries, branded content, and live podcasts.</span></div></li>
+          <li><span class="why-check">✦</span><div class="why-text"><strong>Fast Turnaround</strong><span>Custom quotes within 24 hours. We move fast so your production timeline stays on track.</span></div></li>
+          <li><span class="why-check">✦</span><div class="why-text"><strong>One Point of Contact</strong><span>From first inquiry to shoot wrap — you deal with us, not a chain of vendors.</span></div></li>
+        </ul>
+      </div>
+      <div class="why-visual reveal">
+        <div class="why-visual-card" style="grid-column:span 2"><div class="why-big-num">200+</div><div class="why-small-label">Successful Shoots Managed</div></div>
+        <div class="why-visual-card"><div class="why-big-num">5★</div><div class="why-small-label">Average Client Rating</div></div>
+        <div class="why-visual-card"><div class="why-big-num">24h</div><div class="why-small-label">Quote Response Time</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">Client Feedback</p>
+      <h2 class="section-title">Trusted by<br/>Creators & Brands</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial reveal"><div class="stars">★★★★★</div><p class="testimonial-text">They handled everything — cameras, lighting, sound, and crew. We just showed up and focused on the content. Absolutely seamless.</p><div class="testimonial-author"><div class="testimonial-avatar">AR</div><div><div class="testimonial-name">Arjun Rao</div><div class="testimonial-role">YouTube Creator, 800K subscribers</div></div></div></div>
+      <div class="testimonial reveal"><div class="stars">★★★★★</div><p class="testimonial-text">We needed a podcast setup at short notice and 7 Bucks Media delivered a complete rig to our office within the day. Incredible service.</p><div class="testimonial-author"><div class="testimonial-avatar">PS</div><div><div class="testimonial-name">Priya Sharma</div><div class="testimonial-role">Podcast Host, The Startup Brief</div></div></div></div>
+      <div class="testimonial reveal"><div class="stars">★★★★★</div><p class="testimonial-text">Custom quote, professional team, and the shoot went exactly as planned. They know their craft. Will use them for every production going forward.</p><div class="testimonial-author"><div class="testimonial-avatar">KM</div><div><div class="testimonial-name">Kabir Mehta</div><div class="testimonial-role">Director, KMFilms</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">FAQs</p>
+      <h2 class="section-title">Common<br/>Questions</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span class="faq-q-text">Do you show fixed prices for rentals?</span><span class="faq-toggle">+</span></div><div class="faq-answer">No — every project is different. Pricing depends on the equipment needed, duration, crew requirements, and location. Contact us with your brief and we'll send a custom quote within 24 hours.</div></div>
+      <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span class="faq-q-text">Can I rent just a camera without a crew?</span><span class="faq-toggle">+</span></div><div class="faq-answer">Yes. Equipment-only rentals are available. We also offer operator-included options if you'd like someone to run the kit professionally.</div></div>
+      <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span class="faq-q-text">How quickly can you set up a podcast recording space?</span><span class="faq-toggle">+</span></div><div class="faq-answer">For most podcast setups, we can be on-site and fully configured within a few hours of confirming the brief. Speak to us about your timeline and we'll work around it.</div></div>
+      <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span class="faq-q-text">What types of shoots do you support?</span><span class="faq-toggle">+</span></div><div class="faq-answer">We work across branded content, documentaries, commercial shoots, corporate videos, podcast recordings, event coverage, and social media productions.</div></div>
+      <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span class="faq-q-text">Do you provide crew alongside equipment?</span><span class="faq-toggle">+</span></div><div class="faq-answer">Yes. We can supply sound recordists, photographers, videographers, camera assistants, and production coordinators depending on your project scope.</div></div>
+      <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span class="faq-q-text">What areas do you cover?</span><span class="faq-toggle">+</span></div><div class="faq-answer">We are based in Delhi and operate across the NCR region and beyond. For outstation shoots, travel arrangements are included in the custom quote.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="contact-wrap">
+      <div class="reveal">
+        <p class="section-label">Get in Touch</p>
+        <h2 class="section-title">Let's Talk<br/>About Your<br/>Project</h2>
+        <div class="divider"></div>
+        <p class="section-desc" style="margin-bottom:2.5rem">No fixed rates. No standard packages. Just tell us what you need and we'll put together the best deal for your production.</p>
+        <div class="contact-info-item"><div class="contact-icon">📞</div><div><div class="contact-label">Phone / WhatsApp</div><div class="contact-value">+91 97160 53599</div></div></div>
+        <div class="contact-info-item"><div class="contact-icon">✉️</div><div><div class="contact-label">Email</div><div class="contact-value">hello@7bucksmedia.com</div></div></div>
+        <div class="contact-info-item"><div class="contact-icon">📍</div><div><div class="contact-label">Based In</div><div class="contact-value">Delhi NCR, India</div></div></div>
+      </div>
+      <div class="reveal">
+        <div class="contact-form">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Your Name</label><input id="cf-name" class="form-input" type="text" placeholder="Rahul Verma"/></div>
+            <div class="form-group"><label class="form-label">Phone / WhatsApp</label><input id="cf-phone" class="form-input" type="tel" placeholder="+91 98XXX XXXXX"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email Address</label><input id="cf-email" class="form-input" type="email" placeholder="you@company.com"/></div>
+          <div class="form-group"><label class="form-label">Service Needed</label>
+            <select id="cf-service" class="form-select">
+              <option value="">Select a service...</option>
+              <option>Camera Rental</option><option>Audio Equipment</option><option>Lighting Rental</option>
+              <option>Podcast Setup</option><option>Crew & Talent</option><option>Full Shoot Management</option><option>Multiple / Custom</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Tell Us About Your Project</label><textarea id="cf-message" class="form-textarea" placeholder="Shoot date, location, what you're producing, and any specific requirements..."></textarea></div>
+          <button class="btn-primary" onclick="sendToWhatsApp()" style="width:100%;padding:1rem;font-size:.9rem;letter-spacing:.06em;border-radius:2px">Send via WhatsApp →</button>
+          <p style="font-size:.75rem;color:var(--grey);text-align:center">Tapping send will open WhatsApp with your details pre-filled.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo">7 Bucks<span> Media</span></a>
+        <p>Professional media equipment rental and full shoot management based in Delhi NCR. Every project, custom-built.</p>
+      </div>
+      <div class="footer-col"><h4>Services</h4><ul><li><a href="#services">Camera Rental</a></li><li><a href="#services">Audio Equipment</a></li><li><a href="#services">Lighting</a></li><li><a href="#services">Podcast Setup</a></li><li><a href="#services">Crew & Talent</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a href="#why">About Us</a></li><li><a href="#testimonials">Client Work</a></li><li><a href="#process">Our Process</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="#contact">Get a Quote</a></li><li><a href="tel:+919716053599">Call Us</a></li><li><a href="https://wa.me/919716053599">WhatsApp</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 7 Bucks Media. All rights reserved.</p>
+      <div class="social-links"><a href="#">Instagram</a><a href="#">YouTube</a><a href="#">LinkedIn</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/919716053599" target="_blank" rel="noopener" class="wa-float" aria-label="Chat on WhatsApp">
+  <svg class="wa-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 2C8.268 2 2 8.268 2 16c0 2.49.648 4.83 1.782 6.86L2 30l7.34-1.75A13.93 13.93 0 0016 30c7.732 0 14-6.268 14-14S23.732 2 16 2z" fill="#25D366"/><path d="M23.5 20.27c-.32-.16-1.9-.94-2.2-1.04-.29-.1-.5-.16-.71.16-.21.32-.82 1.04-1.01 1.26-.18.21-.37.24-.69.08-.32-.16-1.35-.5-2.57-1.59-.95-.85-1.59-1.9-1.78-2.22-.18-.32-.02-.49.14-.65.14-.14.32-.37.48-.56.16-.18.21-.32.32-.53.11-.21.05-.4-.02-.56-.08-.16-.71-1.71-.97-2.34-.25-.61-.51-.53-.71-.54h-.6c-.21 0-.54.08-.82.4-.29.32-1.09 1.07-1.09 2.6s1.12 3.02 1.27 3.23c.16.21 2.2 3.36 5.33 4.71.74.32 1.32.51 1.77.66.74.24 1.42.2 1.95.12.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z" fill="#fff"/></svg>
+  <span class="wa-label">Chat with us</span>
+  <span class="wa-ping"></span>
+</a>
+
+<script>
+/* ══════════════════════════════════
+   THREE.JS-STYLE 3D CANVAS ENGINE
+   (pure WebGL via raw Canvas2D with
+   perspective projection for broad compat)
+══════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, mx=0, my=0, scrollY=0;
+  const AMBER='rgba(200,149,74,', WHITE='rgba(242,240,235,';
+
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+  window.addEventListener('resize',resize); resize();
+
+  window.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5);my=(e.clientY/H-.5)});
+  window.addEventListener('scroll',()=>{scrollY=window.scrollY},{passive:true});
+
+  /* ── PARTICLES ── */
+  const particles=[];
+  for(let i=0;i<120;i++){
+    particles.push({
+      x:(Math.random()-.5)*2000,
+      y:(Math.random()-.5)*2000,
+      z:Math.random()*1800-300,
+      vx:(Math.random()-.5)*.3,
+      vy:(Math.random()-.5)*.3,
+      vz:(Math.random()-.5)*.5,
+      size:Math.random()*2+.5,
+      amber:Math.random()>.65,
+      opacity:Math.random()*.6+.2
+    });
+  }
+
+  /* ── 3D FLOATING SHAPES (wireframe boxes = camera-like outlines) ── */
+  const shapes=[];
+  const shapeTypes=['box','ring','cross'];
+  for(let i=0;i<18;i++){
+    shapes.push({
+      x:(Math.random()-.5)*3000,
+      y:(Math.random()-.5)*3000,
+      z:Math.random()*1500+200,
+      rx:Math.random()*Math.PI*2,
+      ry:Math.random()*Math.PI*2,
+      rz:Math.random()*Math.PI*2,
+      vrx:(Math.random()-.5)*.008,
+      vry:(Math.random()-.5)*.012,
+      vrz:(Math.random()-.5)*.006,
+      size:Math.random()*40+20,
+      type:shapeTypes[Math.floor(Math.random()*3)],
+      amber:Math.random()>.5,
+      opacity:Math.random()*.25+.08
+    });
+  }
+
+  /* ── GRID PLANE ── */
+  function drawGrid(t){
+    const fov=600, camZ=300+scrollY*.15;
+    ctx.save();
+    ctx.strokeStyle=`rgba(200,149,74,0.04)`;
+    ctx.lineWidth=.5;
+    const gridSize=80, cols=30, rows=20;
+    const offX=((t*.02+mx*30)%gridSize);
+    const offY=((t*.015+my*20+scrollY*.05)%gridSize);
+    for(let x=-cols;x<=cols;x++){
+      const wx=x*gridSize+offX;
+      const p1=project3D(wx,-800,camZ,fov);
+      const p2=project3D(wx, 800,camZ,fov);
+      if(p1&&p2){ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke()}
+    }
+    for(let y=-rows;y<=rows;y++){
+      const wy=y*gridSize+offY;
+      const p1=project3D(-2000,wy,camZ,fov);
+      const p2=project3D( 2000,wy,camZ,fov);
+      if(p1&&p2){ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke()}
+    }
+    ctx.restore();
+  }
+
+  function project3D(x,y,z,fov){
+    if(z<=0)return null;
+    const scale=fov/z;
+    return{x:W/2+x*scale,y:H/2+y*scale,scale};
+  }
+
+  /* ── ROTATE POINT ── */
+  function rotateX(p,a){return{x:p.x,y:p.y*Math.cos(a)-p.z*Math.sin(a),z:p.y*Math.sin(a)+p.z*Math.cos(a)}}
+  function rotateY(p,a){return{x:p.x*Math.cos(a)+p.z*Math.sin(a),y:p.y,z:-p.x*Math.sin(a)+p.z*Math.cos(a)}}
+  function rotateZ(p,a){return{x:p.x*Math.cos(a)-p.y*Math.sin(a),y:p.x*Math.sin(a)+p.y*Math.cos(a),z:p.z}}
+
+  function drawBox(cx,cy,cz,size,rx,ry,rz,color,op,fov){
+    const h=size/2;
+    let verts=[
+      {x:-h,y:-h,z:-h},{x:h,y:-h,z:-h},{x:h,y:h,z:-h},{x:-h,y:h,z:-h},
+      {x:-h,y:-h,z:h},{x:h,y:-h,z:h},{x:h,y:h,z:h},{x:-h,y:h,z:h}
+    ];
+    verts=verts.map(v=>{let p=rotateX(v,rx);p=rotateY(p,ry);p=rotateZ(p,rz);return{x:p.x+cx,y:p.y+cy,z:p.z+cz}});
+    const edges=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    ctx.save();ctx.strokeStyle=`rgba(${color},${op})`;ctx.lineWidth=.8;
+    edges.forEach(([a,b])=>{
+      const p1=project3D(verts[a].x,verts[a].y,verts[a].z,fov);
+      const p2=project3D(verts[b].x,verts[b].y,verts[b].z,fov);
+      if(p1&&p2&&p1.scale>0&&p2.scale>0){ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke()}
+    });
+    ctx.restore();
+  }
+
+  function drawRing(cx,cy,cz,size,rx,ry,rz,color,op,fov){
+    const segs=16;
+    const pts=[];
+    for(let i=0;i<=segs;i++){
+      const a=(i/segs)*Math.PI*2;
+      let v={x:Math.cos(a)*size,y:Math.sin(a)*size,z:0};
+      v=rotateX(v,rx);v=rotateY(v,ry);v=rotateZ(v,rz);
+      pts.push({x:v.x+cx,y:v.y+cy,z:v.z+cz});
+    }
+    ctx.save();ctx.strokeStyle=`rgba(${color},${op})`;ctx.lineWidth=.8;
+    ctx.beginPath();
+    pts.forEach((pt,i)=>{
+      const p=project3D(pt.x,pt.y,pt.z,fov);
+      if(!p)return;
+      i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);
+    });
+    ctx.stroke();ctx.restore();
+  }
+
+  /* ── SCAN LINE ── */
+  function drawScanline(t){
+    const y=((t*.4)%H);
+    const grad=ctx.createLinearGradient(0,y-2,0,y+2);
+    grad.addColorStop(0,'transparent');
+    grad.addColorStop(.5,`rgba(200,149,74,0.03)`);
+    grad.addColorStop(1,'transparent');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,y-2,W,4);
+  }
+
+  /* ── LENS FLARES ── */
+  const flares=[{x:.25,y:.3,size:60,t:0},{x:.75,y:.6,size:40,t:2},{x:.5,y:.8,size:50,t:4}];
+  function drawFlares(t){
+    flares.forEach(f=>{
+      const pulse=.5+Math.sin(t*.003+f.t)*.3;
+      const gx=W*f.x+mx*30,gy=H*f.y+my*20;
+      const g=ctx.createRadialGradient(gx,gy,0,gx,gy,f.size*pulse);
+      g.addColorStop(0,`rgba(200,149,74,0.04)`);
+      g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.arc(gx,gy,f.size*pulse,0,Math.PI*2);ctx.fill();
+    });
+  }
+
+  let t=0;
+  function animate(){
+    t++;
+    ctx.clearRect(0,0,W,H);
+
+    /* dark bg gradient */
+    const bg=ctx.createRadialGradient(W/2+mx*80,H/2+my*60,0,W/2,H/2,Math.max(W,H));
+    bg.addColorStop(0,'rgba(14,12,10,1)');
+    bg.addColorStop(.6,'rgba(10,10,10,1)');
+    bg.addColorStop(1,'rgba(8,8,8,1)');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+    drawGrid(t);
+    drawFlares(t);
+    drawScanline(t);
+
+    const fov=500+scrollY*.05;
+    const camTx=mx*60, camTy=my*40;
+
+    /* particles */
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.z+=p.vz;
+      if(p.z<50)p.z=1800;if(p.z>1800)p.z=50;
+      if(Math.abs(p.x)>1500)p.vx*=-1;if(Math.abs(p.y)>1500)p.vy*=-1;
+      const proj=project3D(p.x+camTx,p.y+camTy+scrollY*.1,p.z,fov);
+      if(!proj||proj.x<-10||proj.x>W+10||proj.y<-10||proj.y>H+10)return;
+      const sz=Math.max(.3,p.size*proj.scale*.5);
+      const alpha=p.opacity*(proj.scale*.8);
+      ctx.beginPath();
+      ctx.arc(proj.x,proj.y,Math.min(sz,3),0,Math.PI*2);
+      ctx.fillStyle=p.amber?`${AMBER}${alpha})`:`${WHITE}${alpha*.4})`;
+      ctx.fill();
+    });
+
+    /* 3d shapes */
+    shapes.forEach(s=>{
+      s.rx+=s.vrx;s.ry+=s.vry;s.rz+=s.vrz;
+      const sy=s.y+scrollY*.2;
+      const col=s.amber?'200,149,74':'242,240,235';
+      if(s.type==='box') drawBox(s.x+camTx,sy+camTy,s.z,s.size,s.rx,s.ry,s.rz,col,s.opacity,fov);
+      else if(s.type==='ring') drawRing(s.x+camTx,sy+camTy,s.z,s.size*.6,s.rx,s.ry,s.rz,col,s.opacity,fov);
+      else {
+        drawRing(s.x+camTx,sy+camTy,s.z,s.size*.5,s.rx,s.ry,0,col,s.opacity,fov);
+        drawRing(s.x+camTx,sy+camTy,s.z,s.size*.5,0,s.ry,s.rz,col,s.opacity*.7,fov);
+      }
+    });
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+/* ══════════════════════════════════
+   UI LOGIC
+══════════════════════════════════ */
+
+/* FAQ */
+function toggleFaq(el){
+  const item=el.closest('.faq-item');
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+/* MOBILE MENU */
+function toggleMenu(){
+  const links=document.querySelector('.nav-links');
+  if(links.style.display==='flex'){links.style.display='none'}
+  else{links.style.display='flex';links.style.flexDirection='column';links.style.position='absolute';links.style.top='100%';links.style.left='0';links.style.right='0';links.style.background='rgba(10,10,10,0.97)';links.style.padding='1.5rem 4vw';links.style.borderBottom='1px solid rgba(200,149,74,0.15)'}
+}
+
+/* WHATSAPP FORM */
+function sendToWhatsApp(){
+  const name=document.getElementById('cf-name').value.trim();
+  const phone=document.getElementById('cf-phone').value.trim();
+  const email=document.getElementById('cf-email').value.trim();
+  const service=document.getElementById('cf-service').value.trim();
+  const message=document.getElementById('cf-message').value.trim();
+  if(!name){alert('Please enter your name.');return}
+  if(!phone){alert('Please enter your phone number.');return}
+  const text=`👋 *New Quote Request — 7 Bucks Media*\n\n*Name:* ${name}\n*Phone:* ${phone}\n`+(email?`*Email:* ${email}\n`:'')+(service?`*Service:* ${service}\n`:'')+( message?`\n*Project Details:*\n${message}`:'');
+  window.open(`https://wa.me/919716053599?text=${encodeURIComponent(text)}`,'_blank');
+}
+
+/* HERO ENTRANCE */
+(function(){
+  const title=document.querySelector('.hero-title');
+  if(!title)return;
+  const parts=title.innerHTML.split('<br>');
+  title.innerHTML=parts.map(p=>`<span style="display:block;overflow:hidden"><span class="tinner" style="display:block;transform:translateY(110%);opacity:0;transition:transform .8s cubic-bezier(.16,1,.3,1),opacity .6s ease">${p}</span></span>`).join('');
+  const items=[
+    document.querySelector('.hero-eyebrow'),
+    ...document.querySelectorAll('.tinner'),
+    document.querySelector('.hero-sub'),
+    document.querySelector('.hero-btns'),
+    document.querySelector('.hero-scroll')
+  ];
+  items.forEach((el,i)=>{
+    if(!el)return;
+    if(!el.classList.contains('tinner')){el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .7s ease,transform .7s ease'}
+    setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)'},300+i*140);
+  });
+})();
+
+/* SCROLL REVEAL */
+const revObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.classList.add('visible');
+    const kids=[...e.target.querySelectorAll('.service-card,.step,.equip-item,.testimonial,.why-list li')];
+    kids.forEach((k,i)=>{k.style.opacity='0';k.style.transform='translateY(22px)';k.style.transition=`opacity .55s ease ${i*80}ms,transform .55s ease ${i*80}ms`;setTimeout(()=>{k.style.opacity='1';k.style.transform='none'},i*80)});
+    revObs.unobserve(e.target);
+  });
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+/* DIVIDERS */
+const divObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');divObs.unobserve(e.target)}})},{threshold:.8});
+document.querySelectorAll('.divider').forEach(d=>divObs.observe(d));
+
+/* COUNTER */
+function animCounter(el,target,suffix,dur){
+  let start=null;
+  function step(ts){if(!start)start=ts;const p=Math.min((ts-start)/dur,1);const e2=1-Math.pow(1-p,3);el.textContent=Math.round(e2*target)+suffix;if(p<1)requestAnimationFrame(step)}
+  requestAnimationFrame(step);
+}
+const statObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;e.target.querySelectorAll('.stat-num').forEach(n=>{const m=n.textContent.match(/^(\d+)(.*)/);if(m)animCounter(n,+m[1],m[2],1600)});statObs.unobserve(e.target)})},{threshold:.4});
+const statsEl=document.querySelector('#stats');if(statsEl)statObs.observe(statsEl);
+
+/* 3D CARD TILT */
+document.querySelectorAll('.depth-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`perspective(700px) rotateY(${x*10}deg) rotateX(${-y*10}deg) scale(1.03) translateZ(10px)`;
+    card.style.boxShadow=`${-x*20}px ${-y*20}px 40px rgba(200,149,74,0.15)`;
+  });
+  card.addEventListener('mouseleave',()=>{card.style.transform='';card.style.boxShadow='';});
+});
+
+/* MAGNETIC BUTTONS */
+document.querySelectorAll('.btn-primary,.btn-outline').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const x=(e.clientX-r.left-r.width/2)*.3;const y=(e.clientY-r.top-r.height/2)*.3;btn.style.transform=`translate(${x}px,${y}px)`});
+  btn.addEventListener('mouseleave',()=>{btn.style.transform=''});
+});
+
+/* NAV SCROLL SHRINK */
+const nav=document.querySelector('nav');
+window.addEventListener('scroll',()=>{
+  nav.style.padding=window.scrollY>60?'.75rem 4vw':'1.2rem 4vw';
+  nav.style.background=window.scrollY>60?'rgba(10,10,10,0.97)':'rgba(10,10,10,0.75)';
+},{passive:true});
+
+/* ACTIVE NAV */
+const allSections=document.querySelectorAll('section[id]');
+const navAs=document.querySelectorAll('.nav-links a');
+new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){navAs.forEach(a=>a.style.color='');const act=document.querySelector(`.nav-links a[href="#${e.target.id}"]`);if(act&&!act.classList.contains('nav-cta'))act.style.color='var(--amber)'}})},{threshold:.5}).observe;
+allSections.forEach(s=>new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){navAs.forEach(a=>{if(!a.classList.contains('nav-cta'))a.style.color='';});const act=document.querySelector(`.nav-links a[href="#${e.target.id}"]`);if(act&&!act.classList.contains('nav-cta'))act.style.color='var(--amber)'}})},{threshold:.5}).observe(s));
+
+/* RIPPLE */
+document.querySelectorAll('.equip-item').forEach(item=>{item.addEventListener('click',e=>{const r=document.createElement('span');const rect=item.getBoundingClientRect();r.style.cssText=`position:absolute;border-radius:50%;background:rgba(200,149,74,.25);width:10px;height:10px;top:${e.clientY-rect.top-5}px;left:${e.clientX-rect.left-5}px;animation:ripple .6s ease-out forwards;pointer-events:none;`;item.style.position='relative';item.style.overflow='hidden';item.appendChild(r);setTimeout(()=>r.remove(),600)})});
+
+/* PAGE FADE IN */
+window.addEventListener('load',()=>{document.body.style.opacity='1'});
+</script>
+</body>
+</html>
